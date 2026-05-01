@@ -11,6 +11,7 @@ class MyUser(AbstractUser):
         blank=True,
         verbose_name='Роль пользователя'
     )
+    email = models.EmailField("email address", unique=True, blank=False)
     groups = models.ManyToManyField(
         'auth.Group',
         related_name='myuser_set',
@@ -23,6 +24,8 @@ class MyUser(AbstractUser):
         blank=True,
         verbose_name='Права пользователя'
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
         return f'{self.username} ({self.role})' if self.role else self.username

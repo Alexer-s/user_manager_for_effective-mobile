@@ -28,12 +28,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class LoginSerializer(serializers.Serializer):
     """Сериализатор для входа пользователя."""
-    email = serializers.EmailField(required=False)
-    username = serializers.CharField(required=True)
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, data):
-        user = authenticate(username=data['username'], password=data['password'])
+        user = authenticate(username=data['email'], password=data['password'])
         if not user:
             raise serializers.ValidationError("Неверные учетные данные.")
         if not user.is_active:
