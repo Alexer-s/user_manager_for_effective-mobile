@@ -1,4 +1,5 @@
 from rest_framework.permissions import BasePermission
+
 from .models import AccessRoleRule
 
 
@@ -12,7 +13,7 @@ class BusinessElementPermission(BasePermission):
         if not request.user or not request.user.is_authenticated:
             return False
 
-        element_name = getattr(view, 'business_element_name', None)
+        element_name = getattr(view, "business_element_name", None)
         if not element_name:
             return True
 
@@ -27,20 +28,20 @@ class BusinessElementPermission(BasePermission):
 
         method = request.method.upper()
 
-        if method == 'GET':
+        if method == "GET":
             return rule.can_read_own or rule.can_read_all
-        elif method == 'POST':
+        elif method == "POST":
             return rule.can_create
-        elif method in ['PUT', 'PATCH']:
+        elif method in ["PUT", "PATCH"]:
             return rule.can_update_own or rule.can_update_all
-        elif method == 'DELETE':
+        elif method == "DELETE":
             return rule.can_delete_own or rule.can_delete_all
         return False
 
     def has_object_permission(self, request, view, obj):
         """Проверка прав доступа на уровне объекта."""
 
-        element_name = getattr(view, 'business_element_name', None)
+        element_name = getattr(view, "business_element_name", None)
         if not element_name:
             return True
 
@@ -55,24 +56,24 @@ class BusinessElementPermission(BasePermission):
 
         method = request.method.upper()
 
-        if method == 'GET' and rule.can_read_all:
+        if method == "GET" and rule.can_read_all:
             return True
-        if method in ['PUT', 'PATCH'] and rule.can_update_all:
+        if method in ["PUT", "PATCH"] and rule.can_update_all:
             return True
-        if method == 'DELETE' and rule.can_delete_all:
+        if method == "DELETE" and rule.can_delete_all:
             return True
 
-        owner_id = getattr(obj, 'owner_id', None)
+        owner_id = getattr(obj, "owner_id", None)
         if owner_id is None:
             return False
 
         is_owner = owner_id == request.user.id
 
-        if method == 'GET' and rule.can_read_own and is_owner:
+        if method == "GET" and rule.can_read_own and is_owner:
             return True
-        if method in ['PUT', 'PATCH'] and rule.can_update_own and is_owner:
+        if method in ["PUT", "PATCH"] and rule.can_update_own and is_owner:
             return True
-        if method == 'DELETE' and rule.can_delete_own and is_owner:
+        if method == "DELETE" and rule.can_delete_own and is_owner:
             return True
 
         return False
@@ -85,8 +86,8 @@ class IsAdminUser(BasePermission):
 
     def has_permission(self, request, view):
         return (
-            request.user and
-            request.user.is_authenticated and
-            request.user.role and
-            request.user.role.name == 'admin'
+            request.user
+            and request.user.is_authenticated
+            and request.user.role
+            and request.user.role.name == "admin"
         )
